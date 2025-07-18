@@ -1,0 +1,43 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  - group: terraform-dev  # Default variable group; overridden per stage
+
+stages:
+  - stage: Deploy_Dev
+    displayName: "Deploy to Dev Environment"
+    variables:
+      - group: iac-dev
+    jobs:
+      - job: iac_dev
+        displayName: "Terraform Apply to Dev"
+        pool:
+          vmImage: 'windows-latest'  # Windows VM instead of Ubuntu
+        steps:
+          - checkout: self
+
+          - task: TerraformInstaller@1
+            displayName: "Install Terraform"
+            inputs:
+              terraformVersion: '1.7.0'
+
+          - task: AzureCLI@2
+            displayName: "Terraform Init & Apply"
+            inputs:
+              azureSubscription: 'azure-subscription-conn'  # Your service connection name
+              scriptType: 'ps'
+              scriptLocation: 'inlineScript'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/demo'
+              inlineScript: |
+                terraform init `
+                  -backend-config="resource_group_name=$(rg_backenda)" `
+                  -backend-config="storage_account_name=$(container_backend)" `
+                  -backend-config="container_name=$(backend_container)" `
+                  -backend-config="key=$(tf_state_key)"
+
+                terraform plan -var-file="terraform.tfvars"
+
+                terraform apply -auto-approve -var-file="terraform.tfvars"
