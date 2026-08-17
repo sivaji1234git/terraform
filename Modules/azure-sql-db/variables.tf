@@ -12,6 +12,7 @@ variable "sqlserveradmin" {
 }
 variable "sqlpswd" {
   type = string
+  sensitive = true
 }
 variable "sqldbname" {
   type = string

@@ -91,7 +91,7 @@ module "windows_vm" {
   nicname = local.nicname
   vmname = "iac-vm"
   vmadminuser = "sivaji"
-  vmpaswd = "Cloudadmin@987"
+  vmpaswd = var.vm-paswd
   vmsize = "Standard_D2s_v3"
   Windows_os_sku = "2019-Datacenter"
 
@@ -136,7 +136,7 @@ module "sqlserver" {
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = "westus"
   sqlserveradmin      = "sivaji"
-  sqlpswd             = "Clouadmin@987"
+  sqlpswd             = var.sqldbpass
   sqldbname           = local.sqldbname
   dbsize              = 5
   dbsku               = "S1"
@@ -197,11 +197,13 @@ module "azurevm" {
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   subnetname          = local.subnetname
+  
   subnet_addressspace = ["10.0.1.0/28"]
   vnetname            = data.azurerm_virtual_network.vnet.name
   nicname             = local.nicname
   vmname              = local.vmname
   admin_username      = "sivaji"
+
 }
 module "winvmss" {
   source              = "./Modules/azure-winvmss"
@@ -210,7 +212,7 @@ module "winvmss" {
   vmss_name           = local.vmssname
   subnet_id           = data.azurerm_subnet.vmsubnet.id
   username            = "sivaji"
-  password            = "Cloudadmin@123"
+  password            = var.vmsspswd
 }
 module "keyvault" {
   source              = "./Modules/azure-keyvault"
