@@ -30,6 +30,7 @@ variable "vmadminuser" {
 }
 variable "vmpaswd" {
   type = string
+  sensitive = true
 }
 variable "Windows_os_sku" {
   type = string

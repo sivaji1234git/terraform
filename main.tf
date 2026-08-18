@@ -45,16 +45,16 @@ data "azurerm_key_vault" "kv" {
   name                = local.keyvault_name
   resource_group_name = data.azurerm_resource_group.rg.name
 }
-/*module "disk" {
+module "disk" {
   source              = "./Modules/azure-emptydisk"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   disk_name           = local.diskname
   disk_size_gb        = 1
 
-}*/
+}
 
-/*module "vnet" {
+module "vnet" {
   source                 = "./Modules/azure-vnet"
   vnetname               = local.vnetname
   resource_group_name    = data.azurerm_resource_group.rg.name
@@ -64,23 +64,23 @@ data "azurerm_key_vault" "kv" {
   subnet1_address_prefix = ["10.0.0.0/28"]
   subnet2                = local.subnetname
   subnet2_address_prefix = ["10.0.0.16/28"]
-}*/
-/*module "azure-stg-acc" {
+}
+module "azure-stg-acc" {
   source = "./Modules/azure-stg-acc"
   stgname = "stgdev38y3asjdh"
   location = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
   account_tier = "Standard"
   account_replication_type = "LRS"
-}*/
-/*module "nsg" {
+}
+module "nsg" {
   source              = "./Modules/azure-nsg"
   nsgname             = local.nsgname
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   rulename            = "allow-tcp"
-}*/
-/*module "windows_vm" {
+}
+module "windows_vm" {
   source = "./Modules/azure-winvm"
   vnetname = local.vnetname
   resource_group_name = data.azurerm_resource_group.rg.name
@@ -91,20 +91,20 @@ data "azurerm_key_vault" "kv" {
   nicname = local.nicname
   vmname = "iac-vm"
   vmadminuser = "sivaji"
-  vmpaswd = "Cloudadmin@987"
+  vmpaswd = var.vm-paswd
   vmsize = "Standard_D2s_v3"
   Windows_os_sku = "2019-Datacenter"
 
-}*/
-/*module "winwebapp" {
+}
+module "winwebapp" {
   source = "./Modules/azure-winwebapp"
   aspname = local.aspname
   webappname = local.webappname
   resource_group_name = data.azurerm_resource_group.rg.name
   location = "Westus"
   aspplan_sku = "S1"
-}*/
-/*module "azure-lb" {
+}
+module "azure-lb" {
   source              = "./Modules/azure-lb"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = "westus"
@@ -112,8 +112,8 @@ data "azurerm_key_vault" "kv" {
   lbname              = local.lbname
   BackEndAddressPool  = "mybp"
 }
-*/
-/*module "apw-gateway" {
+
+module "apw-gateway" {
   source = "./Modules/azure-app-gateway"
   resource_group_name = data.azurerm_resource_group.rg.name
   location = "westus"
@@ -121,29 +121,30 @@ data "azurerm_key_vault" "kv" {
   apw-pip = local.apw-fip
   apw-subnet_id = data.azurerm_subnet.nameapw-subnet.id
   vnet-name = data.azurerm_virtual_network.vnet.name
-}*/
-/*module "container-registry" {
+}
+module "container-registry" {
   source = "./Modules/azure-container-registry"
   acr-name = local.acr-name
   resource_group_name = data.azurerm_resource_group.rg.name
   location = "westus"
   acr-sku = "Premium"
   
-}*/
-/*module "sqlserver" {
+}
+module "sqlserver" {
   source              = "./Modules/azure-sql-db"
   sqlservername       = local.sqlservername
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = "westus"
   sqlserveradmin      = "sivaji"
-  sqlpswd             = "Clouadmin@987"
+  sqlpswd             = var.sqldbpass
   sqldbname           = local.sqldbname
   dbsize              = 5
   dbsku               = "S1"
-}*/
-/*module "pvtep" {
+}
+module "pvtep" {
   source                     = "./Modules/azure-pvt-endpoint"
   resource_group_name        = data.azurerm_resource_group.rg.name
+  subresource_name             = "blob"
   location                   = "westus"
   vnet-id                    = data.azurerm_virtual_network.vnet.id
   subnet_id                  = data.azurerm_subnet.pvtep-subnet.id
@@ -153,23 +154,24 @@ data "azurerm_key_vault" "kv" {
   pvt_dns_name               = "mystgaccep"
   dnszonename                = "mydnszone"
   dnslinkname                = "mydnslink213"
-}*/
-/*module "k8s-cluster" {
+  
+}
+module "k8s-cluster" {
   source              = "./Modules/azure-aks-cluster"
   cluster-name        = local.k8s-cluster
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = "westus"
   dns_prefix          = "k8sdns"
 
-}*/
+}
 
-/*module "waf" {
+module "waf" {
   source              = "./Modules/azure-waf"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = "westus"
   wafname             = local.wafname
-}*/
-/*module "routetable" {
+}
+module "routetable" {
   source                 = "./Modules/azure-route-table"
   resource_group_name    = data.azurerm_resource_group.rg.name
   location               = "westus"
@@ -179,8 +181,8 @@ data "azurerm_key_vault" "kv" {
   next_hop_type          = "VirtualAppliance"
   next_hop_in_ip_address = "10.0.0.10"
   address_prefix         = "10.0.0.0/28"
-}*/
-/*module "azure_firewall" {
+}
+module "azure_firewall" {
   source                           = "./Modules/azure-firewall"
   resource_group_name              = data.azurerm_resource_group.rg.name
   location                         = "westus"
@@ -189,36 +191,33 @@ data "azurerm_key_vault" "kv" {
   AzureFirewallSubnet_addressspace = ["10.0.0.0/24"]
   fpip                             = local.firewall_frontendip
   firewall_name                    = local.firewall_name
-}*/
-/*module "azurevm" {
+}
+module "azurevm" {
   source              = "./Modules/azure-linuxvm"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   subnetname          = local.subnetname
+  
   subnet_addressspace = ["10.0.1.0/28"]
   vnetname            = data.azurerm_virtual_network.vnet.name
   nicname             = local.nicname
   vmname              = local.vmname
   admin_username      = "sivaji"
-}*/
-/*module "winvmss" {
+
+}
+module "winvmss" {
   source              = "./Modules/azure-winvmss"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   vmss_name           = local.vmssname
   subnet_id           = data.azurerm_subnet.vmsubnet.id
   username            = "sivaji"
-  password            = "Cloudadmin@123"
-}*/
+  password            = var.vmsspswd
+}
 module "keyvault" {
   source              = "./Modules/azure-keyvault"
   key_vault_name      = local.keyvault_name
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
 }
-module "kv_secret" {
-  source         = "./Modules/azure-kv-secret"
-  key_vault_id   = data.azurerm_key_vault.kv.id
-  kv_secret_name = "mysceret"
-  secret_value   = "cloudadmin@123"
-}
+
